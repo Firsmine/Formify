@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,6 +12,11 @@ return new class extends Migration
     {
         Schema::create('forms', function (Blueprint $table) {
             $table->id();
+            $table->string('name', 255);
+            $table->string('slug')->unique();
+            $table->string('description', 255)->nullable();
+            $table->boolean('limit_one_response')->default(false);
+            $table->foreignId('creator_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
         });
     }
