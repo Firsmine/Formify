@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -31,6 +32,20 @@ class AuthController extends Controller
                 'email' => $user->email,
                 'accessToken' => $token
             ]
-        ]);
+        ], 200);
+    }
+
+    public function logout(Request $request)
+    {
+        try {
+            $request->user()->currentAccessToken()->delete();
+            return response()->json([
+                'message' => 'Logout success'
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Unauthenticated'
+            ], 401);
+        }
     }
 }
