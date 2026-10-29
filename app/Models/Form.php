@@ -27,7 +27,7 @@ class Form extends Model
     {
         return $this->belongsTo(User::class, 'creator_id');
     }
-    public function question()
+    public function questions()
     {
         return $this->hasMany(Question::class, 'form_id');
     }

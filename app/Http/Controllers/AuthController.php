@@ -9,13 +9,29 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    public function register(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'string|required',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'string|required|min:6'
+        ]);
+        $user = User::create($data);
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Register successful',
+            'user' => [$user, 'token' => $token]
+        ], 201);
+    }
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'string|required|exists:users,email',
+            'email' => 'string|required',
             'password' => 'string|required|min:5'
         ]);
         $user = User::where('email', $request->email)->first();
+        $user->tokens()->delete();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
